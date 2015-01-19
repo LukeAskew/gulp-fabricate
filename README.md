@@ -1,17 +1,97 @@
 # gulp-fabricate
 
-> A gulp plugin for Fabricating pages.
+> A gulp plugin for fabricating pages using Handlebars, JSON, and front-matter.
 
-## Template Assembly
+Turn this:
 
-Templates can be assembled dynamically using Handlebars and JSON and/or [front matter](https://www.npmjs.com/package/gray-matter) as a data model.
+```html
+---
+title: Document Name
+name: World
+---
+
+<h1>{{home.greeting}}, {{name}}!</h1>
+
+{{> button}}
+```
+
+into this:
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Document Name</title>
+</head>
+<body>
+
+    <h1>Hello, World!</h1>
+
+    <a href="#" class="button">Click me!</a>
+
+</body>
+</html>
+```
+
+## Usage
+
+Install:
+
+```
+$ npm install --save-dev gulp-fabricate
+```
+
+Example:
+
+```js
+var fabricate = require('gulp-fabricate');
+var gulp = require('gulp');
+
+gulp.task('templates', function () {
+	return gulp.src('src/templates/pages/**/*')
+		.pipe(fabricate())
+		.pipe(gulp.dest('dist/'));
+});
+```
+
+## Options
+
+### options.layout
+
+Type: `String`  
+Default: `default`
+
+Default layout template.
+
+### options.layouts
+
+Type: `String` or `Array`  
+Default: `src/templates/layouts/**/*`
+
+Files to use a layout templates.
+
+### options.materials
+
+Type: `String` or `Array`  
+Default: `src/templates/materials/**/*`
+
+Files to use a partials/helpers.
 
 
-### Assembly parts
+### options.data
+
+Type: `String` or `Array`  
+Default: `src/data/**/*.json`
+
+JSON files to use as data for templates.
+
+## API
+
+### Definitions
 
 - **Layouts**: wrapper templates
 - **Pages**: individual pages
-- **Partials**: partial templates; registered as "partials" in Handlebars
+- **Materials**: partial templates; registered as "partials" and "helpers" in Handlebars
 - **Data**: JSON data piped in as template context
 
 #### Layouts
@@ -75,15 +155,21 @@ The front matter block at the top provides context to both the layout and the pa
 
 Context is also piped in from data files (see below). In this example, `{{home.greeting}}` refers to the `greeting` property in `home.json`.
 
-#### Partials
+#### Materials
 
-Partials are template partials and are registered as Handlebars partials. They are accessed like:
+Materials are partial templates; think of them as the materials used to build pages. 
+
+They are accessible as either a "partial" or a "helper":
 
 ```
-{{> partial-name}}
+<!-- partial -->
+{{> material-name}}
+
+<!-- helper -->
+{{material-name}}
 ```
 
-Any file in the glob defined in `config.templates.assemble.partials` is turned into a partial and can be accessed as such. For example, assume the `components` contains partials:
+Any file in the glob defined in `config.templates.assemble.materials` is turned into a partial/helper and can be accessed as such. For example, assume the `components` contains materials:
 
 ```
 └── components
@@ -95,7 +181,47 @@ The content within these files can be accessed in templates as such:
 
 ```html
 {{> button}}
-{{> form-toggle}}
+{{form-toggle}}
+```
+
+##### Partial vs Helper
+
+The main difference between materials as partial vs helper is the way in which you pass data into the material. When a material is defined as a partial, you can pass it context. When a material is used as a helper, you can pass it a "helper class" parameter, which is helpful when writing OOCSS.
+
+**Partials:**
+
+Assume `items` is an array of items. You can pass the `items` to the partial:
+
+```html
+{{> material-name items}}
+```
+
+Your `material-name.html` file could look like:
+
+```html
+{{#each item}}
+	<li>{{item.name}}</li>
+{{/each}}
+```
+
+**Helper**
+
+You can pass a "helper class" to the helper:
+
+```html
+{{material-name "foo-bar"}}
+```
+
+Assume your `material-name.html` looks like:
+
+```html
+<div>Material</div>
+```
+
+The helper will output:
+
+```html
+<div class="foo-bar">Material</div>
 ```
 
 #### Data

@@ -11,7 +11,7 @@ describe('gulp-fabricate', function () {
 		var stream = fabricate({
 			layout: 'default',
 			layouts: './test/fixtures/templates/layouts/**/*',
-			partials: './test/fixtures/templates/partials/**/*',
+			materials: './test/fixtures/templates/materials/**/*',
 			data: './test/fixtures/data/**/*.json',
 		});
 
@@ -24,7 +24,6 @@ describe('gulp-fabricate', function () {
 		}));
 
 		stream.on('data', function (data) {
-			gutil.log();
 			assert.equal(minify(data.contents.toString(), { collapseWhitespace: true }), expected);
 		});
 
