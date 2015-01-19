@@ -1,6 +1,6 @@
 {
   "name": "gulp-fabricate",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A gulp plugin for fabricating pages.",
   "main": "index.js",
   "engines": {
@@ -16,7 +16,7 @@
   "author": "Luke Askew",
   "license": "MIT",
   "repository": "lukeaskew/gulp-fabricate",
-  "devDependencies": {
+  "dependencies": {
     "cheerio": "^0.18.0",
     "globby": "^1.1.0",
     "gray-matter": "^1.1.2",
@@ -24,7 +24,9 @@
     "handlebars": "^2.0.0",
     "html-minifier": "^0.6.9",
     "lodash": "^2.4.1",
-    "mocha": "^2.1.0",
     "through2": "^0.6.3"
+  },
+  "devDependencies": {
+    "mocha": "^2.1.0"
   }
 }
