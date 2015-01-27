@@ -1,6 +1,6 @@
 # gulp-fabricate
 
-> A gulp plugin for fabricating pages using Handlebars, JSON, and front-matter.
+> A gulp plugin for fabricating pages using Handlebars, JSON, and front matter.
 
 Turn this:
 
@@ -48,10 +48,25 @@ var fabricate = require('gulp-fabricate');
 var gulp = require('gulp');
 
 gulp.task('templates', function () {
-	return gulp.src('src/templates/pages/**/*')
+	return gulp.src('src/views/pages/**/*')
 		.pipe(fabricate())
 		.pipe(gulp.dest('dist/'));
 });
+```
+
+Assuming this directory structure:
+
+```
+└── src
+    ├── data
+    │   └── *.json
+    └── views
+        ├── layouts
+        │   └── default.html
+        ├── materials
+        │   └── *.html
+        └── pages
+            └── *.html
 ```
 
 ## Options
@@ -61,29 +76,28 @@ gulp.task('templates', function () {
 Type: `String`  
 Default: `default`
 
-Default layout template.
+Name of the default layout template. 
 
 ### options.layouts
 
 Type: `String` or `Array`  
-Default: `src/templates/layouts/**/*`
+Default: `src/views/layouts/**/*`
 
-Files to use a layout templates.
+Files to use as layout templates.
 
 ### options.materials
 
 Type: `String` or `Array`  
-Default: `src/templates/materials/**/*`
+Default: `src/views/materials/**/*`
 
 Files to use a partials/helpers.
-
 
 ### options.data
 
 Type: `String` or `Array`  
 Default: `src/data/**/*.json`
 
-JSON files to use as data for templates.
+JSON files to use as data for views.
 
 ## API
 
@@ -91,12 +105,12 @@ JSON files to use as data for templates.
 
 - **Layouts**: wrapper templates
 - **Pages**: individual pages
-- **Materials**: partial templates; registered as "partials" and "helpers" in Handlebars
+- **Materials**: partial views; registered as "partials" and "helpers" in Handlebars
 - **Data**: JSON data piped in as template context
 
 #### Layouts
 
-Layouts are wrappers for page templates. You can define as many layouts as you want by creating `.html` files in your layouts folder.
+Layouts are wrappers for pages. You can define as many layouts as you want by creating `.html` files in your layouts folder.
 
 Example layout:
 
@@ -161,7 +175,7 @@ Materials are partial templates; think of them as the materials used to build pa
 
 They are accessible as either a "partial" or a "helper":
 
-```
+```html
 <!-- partial -->
 {{> material-name}}
 
@@ -169,7 +183,7 @@ They are accessible as either a "partial" or a "helper":
 {{material-name}}
 ```
 
-Any file in the glob defined in `config.templates.assemble.materials` is turned into a partial/helper and can be accessed as such. For example, assume the `components` contains materials:
+Any file in the glob defined in `options.materials` is turned into a partial/helper and can be accessed as such. For example, assume the `components` contains materials:
 
 ```
 └── components
@@ -177,7 +191,7 @@ Any file in the glob defined in `config.templates.assemble.materials` is turned 
     └── form-toggle.html
 ```
 
-The content within these files can be accessed in templates as such:
+The content within these files can be accessed as such:
 
 ```html
 {{> button}}
@@ -226,7 +240,7 @@ The helper will output:
 
 #### Data
 
-Data for templates is defined as JSON.
+Data is defined as JSON.
 
 The `data` folder can contain several `.json` files:
 
@@ -244,7 +258,7 @@ The `data` folder can contain several `.json` files:
 }
 ```
 
-The data within each file can be accessed in the templates using dot notation:
+The data within each file can be accessed using dot notation:
 
 ```html
 {{home.greeting}}

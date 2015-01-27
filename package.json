@@ -1,7 +1,7 @@
 {
   "name": "gulp-fabricate",
-  "version": "0.1.3",
-  "description": "A gulp plugin for fabricating pages.",
+  "version": "0.2.0",
+  "description": "A gulp plug-in for fabricating pages.",
   "main": "index.js",
   "engines": {
     "node": ">=0.10.0"

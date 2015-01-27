@@ -17,8 +17,8 @@ var _ = require('lodash');
 var assembly = {
 	defaults: {
 		layout: 'default',
-		layouts: 'src/templates/layouts/**/*',
-		materials: 'src/templates/materials/**/*',
+		layouts: 'src/views/layouts/**/*',
+		materials: 'src/views/materials/**/*',
 		data: 'src/data/**/*.json'
 	},
 	options: {},

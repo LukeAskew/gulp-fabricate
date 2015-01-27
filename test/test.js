@@ -10,8 +10,8 @@ describe('gulp-fabricate', function () {
 
 		var stream = fabricate({
 			layout: 'default',
-			layouts: './test/fixtures/templates/layouts/**/*',
-			materials: './test/fixtures/templates/materials/**/*',
+			layouts: './test/fixtures/views/layouts/**/*',
+			materials: './test/fixtures/views/materials/**/*',
 			data: './test/fixtures/data/**/*.json',
 		});
 
@@ -20,7 +20,7 @@ describe('gulp-fabricate', function () {
 		stream.on('end', cb);
 
 		stream.write(new gutil.File({
-			contents: new Buffer(fs.readFileSync('./test/fixtures/templates/pages/index.html', 'utf-8'))
+			contents: new Buffer(fs.readFileSync('./test/fixtures/views/pages/index.html', 'utf-8'))
 		}));
 
 		stream.on('data', function (data) {
