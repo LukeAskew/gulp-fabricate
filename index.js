@@ -1,13 +1,15 @@
 // modules
+var _ = require('lodash');
+var changeCase = require('change-case');
 var cheerio = require('cheerio');
 var fs = require('fs');
 var globby = require('globby');
 var gutil = require('gulp-util');
 var Handlebars = require('handlebars');
 var matter = require('gray-matter');
+var md = require('markdown-it')({ linkify: true });
 var path = require('path');
 var through = require('through2');
-var _ = require('lodash');
 
 
 /**
@@ -23,7 +25,9 @@ var assembly = {
 	},
 	options: {},
 	layouts: {},
-	data: {}
+	data: {},
+	materials: {},
+	docs: {}
 };
 
 
@@ -43,7 +47,7 @@ var getFileName = function (filePath) {
  * @return {Object}
  */
 var buildContext = function (matterData) {
-	return _.extend({}, matterData, assembly.data);
+	return _.extend({}, matterData, assembly.data, { materials: assembly.materials }, { docs: assembly.docs });
 };
 
 
@@ -59,18 +63,60 @@ var wrapPage = function (page, layout) {
 
 
 /**
- * Register  with Handlebars
+ * Parse each material - collect data, create partial
  */
-var registerPartials = function () {
+var parseMaterials = function () {
 
 	// get files
-	var files = globby.sync(assembly.options.materials);
+	var files = globby.sync(assembly.options.materials, { nodir: true });
 
-	// register each partial
+
+	// iterate over each file (material)
 	files.forEach(function (file) {
-		var name = getFileName(file);
-		var content = fs.readFileSync(file, 'utf-8');
-		Handlebars.registerPartial(name, content);
+
+		// get info
+		var id = getFileName(file);
+		var fileMatter = matter.read(file);
+		var collection = path.dirname(file).split(path.sep).pop();
+
+
+		// create collection (e.g. "components", "structures") if it doesn't already exist
+		if (!assembly.materials[collection]) {
+			assembly.materials[collection] = {};
+			assembly.materials[collection].name = changeCase.titleCase(collection);
+			assembly.materials[collection].items = {};
+		}
+
+
+		// create meta data object for the material
+		assembly.materials[collection].items[id] = {
+			name: changeCase.titleCase(id),
+			notes: (fileMatter.data.notes) ? md.render(fileMatter.data.notes) : ''
+		};
+
+
+		// register the partial
+		Handlebars.registerPartial(id, fileMatter.content);
+
+	});
+
+
+	// register 'partial' helper used for more dynamic partial includes
+	Handlebars.registerHelper('partial', function (name, context) {
+
+		var template = Handlebars.partials[name];
+		var fn;
+
+		// check to see if template is already compiled
+		if (!_.isFunction(template)) {
+			fn = Handlebars.compile(template);
+		} else {
+			fn = template;
+		}
+
+		var output = fn(buildContext(context)).replace(/^\s+/, '');
+
+		return new Handlebars.SafeString(output);
 	});
 
 };
@@ -82,7 +128,7 @@ var registerPartials = function () {
 var registerHelpers = function () {
 
 	// get files
-	var files = globby.sync(assembly.options.materials);
+	var files = globby.sync(assembly.options.materials, { nodir: true });
 
 	// register each helper
 	files.forEach(function (file) {
@@ -113,7 +159,7 @@ var registerHelpers = function () {
 var getLayouts = function () {
 
 	// get files
-	var files = globby.sync(assembly.options.layouts);
+	var files = globby.sync(assembly.options.layouts, { nodir: true });
 
 	// save content of each file
 	files.forEach(function (file) {
@@ -131,7 +177,7 @@ var getLayouts = function () {
 var getData = function () {
 
 	// get files
-	var files = globby.sync(assembly.options.data);
+	var files = globby.sync(assembly.options.data, { nodir: true });
 
 	// save content of each file
 	files.forEach(function (file) {
@@ -152,10 +198,9 @@ var setup = function (options) {
 	// merge user options with defaults
 	assembly.options = _.extend({}, assembly.defaults, options);
 
-	registerPartials();
-	registerHelpers();
 	getLayouts();
 	getData();
+	parseMaterials();
 
 };
 
