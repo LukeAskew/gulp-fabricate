@@ -100,7 +100,6 @@ var parseMaterials = function () {
 
 	});
 
-
 	// register 'partial' helper used for more dynamic partial includes
 	Handlebars.registerHelper('partial', function (name, context) {
 
@@ -117,6 +116,26 @@ var parseMaterials = function () {
 		var output = fn(buildContext(context)).replace(/^\s+/, '');
 
 		return new Handlebars.SafeString(output);
+	});
+
+};
+
+
+var parseDocs = function () {
+
+	// get files
+	var files = globby.sync(assembly.options.docs, { nodir: true });
+
+	// iterate over each file (material)
+	files.forEach(function (file) {
+
+		var id = getFileName(file);
+
+		assembly.docs[id] = {
+			name: changeCase.titleCase(id),
+			content: md.render(fs.readFileSync(file, 'utf-8'))
+		};
+
 	});
 
 };
@@ -201,6 +220,7 @@ var setup = function (options) {
 	getLayouts();
 	getData();
 	parseMaterials();
+	parseDocs();
 
 };
 
