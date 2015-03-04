@@ -20,8 +20,9 @@ var assembly = {
 	defaults: {
 		layout: 'default',
 		layouts: 'src/views/layouts/**/*',
-		materials: 'src/views/materials/**/*',
-		data: 'src/data/**/*.json'
+		materials: 'src/materials/**/*',
+		data: 'src/data/**/*.json',
+		docs: 'src/docs/**/*.md'
 	},
 	options: {},
 	layouts: {},

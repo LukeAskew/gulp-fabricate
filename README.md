@@ -58,18 +58,32 @@ Assuming this directory structure:
 
 ```
 └── src
-    ├── data
-    │   └── *.json
-    └── views
-        ├── layouts
-        │   └── default.html
-        ├── materials
-        │   └── *.html
-        └── pages
-            └── *.html
+	├── data
+	│   └── *.json
+	├── docs
+	│   └── *.md
+	├── materials
+	│   └── components
+	│       └── *.html
+	└── views
+	    ├── *.html
+	    └── layouts
+	        └── default.html
 ```
 
 ## Options
+
+Default options:
+
+```
+{
+	layout: 'default',
+	layouts: 'src/views/layouts/**/*',
+	materials: 'src/materials/**/*',
+	data: 'src/data/**/*.json',
+	docs: 'src/docs/**/*.md'
+}
+```
 
 ### options.layout
 
@@ -88,7 +102,7 @@ Files to use as layout templates.
 ### options.materials
 
 Type: `String` or `Array`  
-Default: `src/views/materials/**/*`
+Default: `src/materials/**/*`
 
 Files to use a partials/helpers.
 
@@ -99,6 +113,13 @@ Default: `src/data/**/*.json`
 
 JSON files to use as data for views.
 
+### options.docs
+
+Type: `String` or `Array`  
+Default: `src/docs/**/*.md`
+
+Markdown files containing toolkit-wide documentation
+
 ## API
 
 ### Definitions
@@ -107,6 +128,7 @@ JSON files to use as data for views.
 - **Pages**: individual pages
 - **Materials**: partial views; registered as "partials" and "helpers" in Handlebars
 - **Data**: JSON data piped in as template context
+- **Docs**: Markdown files containing documentation.
 
 #### Layouts
 
@@ -173,14 +195,10 @@ Context is also piped in from data files (see below). In this example, `{{home.g
 
 Materials are partial templates; think of them as the materials used to build pages. 
 
-They are accessible as either a "partial" or a "helper":
+They are accessible as a "partial":
 
 ```html
-<!-- partial -->
 {{> material-name}}
-
-<!-- helper -->
-{{material-name}}
 ```
 
 Any file in the glob defined in `options.materials` is turned into a partial/helper and can be accessed as such. For example, assume the `components` contains materials:
@@ -195,47 +213,7 @@ The content within these files can be accessed as such:
 
 ```html
 {{> button}}
-{{form-toggle}}
-```
-
-##### Partial vs Helper
-
-The main difference between materials as partial vs helper is the way in which you pass data into the material. When a material is defined as a partial, you can pass it context. When a material is used as a helper, you can pass it a "helper class" parameter, which is helpful when writing OOCSS.
-
-**Partials:**
-
-Assume `items` is an array of items. You can pass the `items` to the partial:
-
-```html
-{{> material-name items}}
-```
-
-Your `material-name.html` file could look like:
-
-```html
-{{#each item}}
-	<li>{{item.name}}</li>
-{{/each}}
-```
-
-**Helper**
-
-You can pass a "helper class" to the helper:
-
-```html
-{{material-name "foo-bar"}}
-```
-
-Assume your `material-name.html` looks like:
-
-```html
-<div>Material</div>
-```
-
-The helper will output:
-
-```html
-<div class="foo-bar">Material</div>
+{{> form-toggle}}
 ```
 
 #### Data
