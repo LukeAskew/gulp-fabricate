@@ -10,7 +10,7 @@ describe('gulp-fabricate', function () {
 		layout: 'default',
 		layouts: './test/fixtures/views/layouts/**/*',
 		materials: './test/fixtures/materials/**/*',
-		data: './test/fixtures/data/**/*.json',
+		data: './test/fixtures/data/**/*.{yml,json}',
 		docs: './test/fixtures/docs/**/*'
 	};
 

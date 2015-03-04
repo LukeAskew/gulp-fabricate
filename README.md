@@ -59,7 +59,7 @@ Assuming this directory structure:
 ```
 └── src
 	├── data
-	│   └── *.json
+	│   └── *.{json,yml}
 	├── docs
 	│   └── *.md
 	├── materials
@@ -80,7 +80,7 @@ Default options:
 	layout: 'default',
 	layouts: 'src/views/layouts/**/*',
 	materials: 'src/materials/**/*',
-	data: 'src/data/**/*.json',
+	data: 'src/data/**/*.{json,yml}',
 	docs: 'src/docs/**/*.md'
 }
 ```
@@ -111,7 +111,7 @@ Files to use a partials/helpers.
 Type: `String` or `Array`  
 Default: `src/data/**/*.json`
 
-JSON files to use as data for views.
+JSON or YAML files to use as data for views.
 
 ### options.docs
 
@@ -127,7 +127,7 @@ Markdown files containing toolkit-wide documentation
 - **Layouts**: wrapper templates
 - **Pages**: individual pages
 - **Materials**: partial views; registered as "partials" and "helpers" in Handlebars
-- **Data**: JSON data piped in as template context
+- **Data**: Data piped in as template context
 - **Docs**: Markdown files containing documentation.
 
 #### Layouts
@@ -218,14 +218,14 @@ The content within these files can be accessed as such:
 
 #### Data
 
-Data is defined as JSON.
+Data is defined as JSON or YAML.
 
-The `data` folder can contain several `.json` files:
+The `data` folder can contain several `.json` or `.yml` files:
 
 ```
 └── data
     ├── home.json
-    └── contact.json
+    └── contact.yml
 ```
 
 `home.json`:

@@ -10,6 +10,7 @@ var matter = require('gray-matter');
 var md = require('markdown-it')({ linkify: true });
 var path = require('path');
 var through = require('through2');
+var yaml = require('js-yaml');
 
 
 /**
@@ -117,11 +118,16 @@ var parseMaterials = function () {
 		var output = fn(buildContext(context)).replace(/^\s+/, '');
 
 		return new Handlebars.SafeString(output);
+
 	});
 
 };
 
 
+/**
+ * Parse markdown files as "docs"
+ * @return {[type]} [description]
+ */
 var parseDocs = function () {
 
 	// get files
@@ -132,42 +138,12 @@ var parseDocs = function () {
 
 		var id = getFileName(file);
 
+		// save each as unique prop
 		assembly.docs[id] = {
 			name: changeCase.titleCase(id),
 			content: md.render(fs.readFileSync(file, 'utf-8'))
 		};
 
-	});
-
-};
-
-
-/**
- * Register helpers with Handlebars
- */
-var registerHelpers = function () {
-
-	// get files
-	var files = globby.sync(assembly.options.materials, { nodir: true });
-
-	// register each helper
-	files.forEach(function (file) {
-		var name = getFileName(file);
-		var content = fs.readFileSync(file, 'utf-8');
-		Handlebars.registerHelper(name, function () {
-
-			// get helper classes if passed in
-			var helperClasses = (typeof arguments[0] === 'string') ? arguments[0] : '';
-
-			// init cheerio
-			var $ = cheerio.load(content);
-
-			// add helper classes to first element
-			$('*').first().addClass(helperClasses);
-
-			return new Handlebars.SafeString($.html());
-
-		});
 	});
 
 };
@@ -183,9 +159,9 @@ var getLayouts = function () {
 
 	// save content of each file
 	files.forEach(function (file) {
-		var name = getFileName(file);
+		var id = getFileName(file);
 		var content = fs.readFileSync(file, 'utf-8');
-		assembly.layouts[name] = content;
+		assembly.layouts[id] = content;
 	});
 
 };
@@ -201,9 +177,9 @@ var getData = function () {
 
 	// save content of each file
 	files.forEach(function (file) {
-		var name = getFileName(file);
-		var content = JSON.parse(fs.readFileSync(file, 'utf-8'));
-		assembly.data[name] = content;
+		var id = getFileName(file);
+		var content = yaml.safeLoad(fs.readFileSync(file, 'utf-8'));
+		assembly.data[id] = content;
 	});
 
 };
