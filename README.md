@@ -1,3 +1,7 @@
+# :skull: DEPRECATED. Use [fabricator-assemble](https://github.com/fbrctr/fabricator-assemble).
+
+---
+
 # gulp-fabricate
 
 > A gulp plugin for fabricating pages using Handlebars, JSON, and front matter.
